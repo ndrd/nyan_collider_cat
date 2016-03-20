@@ -3,6 +3,7 @@ package geom.visualization;
 import geom.structures.Polygon;
 import geom.math.Vector;
 import java.util.LinkedList;
+import java.util.Arrays;
 
 import processing.core.PImage;
 import processing.core.PShape;
@@ -10,12 +11,15 @@ import processing.event.Event;
 
 
 public class Stage {
-
-	float speed;
-	float aceleration;
+	int width;
+	int height;
+	int speed;
+	int aceleration;
+	int score;
+	int level;
 	LinkedList<Actor> actors;
 
-	class Actor {
+	static class Actor {
 		Rol r;
 		Polygon skeleton;
 		PShape shape;
@@ -23,15 +27,28 @@ public class Stage {
 		boolean inStage;
 		boolean rTl;
 		int birth;
+
+
 	} 
 
-	public Stage () {
+	public Stage (int w, int h, int s, int a) {
+		width = w;
+		height = h;
+		speed = s;
+		aceleration = a;
 		actors =  new LinkedList<>();
+		score = 0;
+		level = 0;
 	}
 
 	public static Actor createBullet() {
 		Polygon p =  new Polygon();
-		return new Actor()
+		return new Actor();
+	}
+
+	public static Actor createRock() {
+		Polygon p =  new Polygon();
+		return new Actor();
 	}
 
 }
@@ -39,7 +56,8 @@ public class Stage {
 enum Rol {
     CAT_SHIP,
     CAT_BULLET, 
-    ICECREAM_ASTEROID
+    ICECREAM_ROCK
 };  
+
 
 

@@ -4,7 +4,7 @@ import java.io.File;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.event.Event;
-
+import gifAnimation.*;
 /**
  * Juego de naves espaciales contra rocas.
  */
@@ -12,6 +12,7 @@ public class SpaceShipGameApp extends PApplet {
 
   PImage starfield;
   PImage cat;
+  Gif myCat;
   int xCat = 0;
   int yCat = 0;
   final int X_SENS = 60;
@@ -22,7 +23,11 @@ public class SpaceShipGameApp extends PApplet {
   final int RIGH = 39;
   int STATUS = 0;
   final int SPEED = 30;
-  Stage st =  new Stage();
+  final int WIDTH = 1024;
+  final int HEIGHT = 768;
+  final int ACCELERATION = 15;
+
+  Stage st =  new Stage(WIDTH, HEIGHT, SPEED, ACCELERATION);
 
 
 
@@ -36,12 +41,6 @@ public class SpaceShipGameApp extends PApplet {
   public void settings() {
     size(1024, 768);
         
-    String path = SpaceShipGameApp.class.getResource("").getPath() + "data/";
-    File file = new File(path);
-    System.out.println(file.getAbsolutePath());
-
-    starfield = loadImage(path +  "starfield.jpg");
-    cat = loadImage(path +  "cat.gif");
   }
 
   /**
@@ -50,6 +49,15 @@ public class SpaceShipGameApp extends PApplet {
    */
   @Override
   public void setup() {
+    String path = SpaceShipGameApp.class.getResource("").getPath() + "data/";
+    File file = new File(path);
+    System.out.println(file.getAbsolutePath());
+
+    starfield = loadImage(path +  "starfield.jpg");
+    cat = loadImage(path +  "cat.gif");
+
+    myCat = new Gif(this, path +  "cat.gif");
+    myCat.play();
   }
 
   /**
@@ -79,7 +87,7 @@ public class SpaceShipGameApp extends PApplet {
 
     hint(DISABLE_DEPTH_MASK);
     image(starfield, 0, 0, width, height);
-    image(cat, xCat, yCat, 150, 100);
+    image(myCat, xCat, yCat, 150, 100);
 
   }
 

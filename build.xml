@@ -34,6 +34,7 @@
     <pathelement location="${libs}/junit-4.12.jar" />
     <pathelement location="${libs}/hamcrest-core-1.3.jar" />
 
+    <pathelement location="${libs}/gifAnimation.jar" />
     <pathelement location="${processing}/core/library/core.jar" />
     <pathelement location="${processing}/core/library/jogl-all.jar" />
     <pathelement location="${processing}/core/library/gluegen-rt.jar" />
