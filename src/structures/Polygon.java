@@ -10,11 +10,15 @@ import geom.math.Vector;
  */
 public class Polygon {
 
+  LinkedList<Vector> points;
+  int centroidX;
+  int centrodY;
   /**
    * Construye un polígono sin puntos.
    *
    */
   public Polygon() {
+    this(new LinkedList<Vector>());
   }
 
   /**
@@ -22,7 +26,8 @@ public class Polygon {
    *
    * @param points Los puntos que representarán al polígono.
    */
-  public Polygon(LinkedList<Vector> points) {
+  public Polygon(LinkedList<Vector> pts) {
+      points = pts;
   }
 
   /**
@@ -31,6 +36,7 @@ public class Polygon {
    * @param point El nuevo punto en el polígono.
    */
   public void add(Vector point) {
+    points.addLast(point);
   }
 
   /**
@@ -40,6 +46,7 @@ public class Polygon {
    * @return LinkedList<Vector> La lista de vértices
    */
   public LinkedList<Vector> getVertexes() {
+
     return null;
   }
 
@@ -88,6 +95,6 @@ public class Polygon {
    * @return int El número de vértices
    */
   public int size() {
-    return -1;
+    return points.size();
   }
 }

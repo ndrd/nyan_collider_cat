@@ -10,9 +10,8 @@ import gifAnimation.*;
  */
 public class SpaceShipGameApp extends PApplet {
 
-  PImage starfield;
-  PImage cat;
-  Gif myCat;
+  Gif starfield;
+  Stage.Actor cat;
   int xCat = 0;
   int yCat = 0;
   final int X_SENS = 60;
@@ -29,8 +28,6 @@ public class SpaceShipGameApp extends PApplet {
 
   Stage st =  new Stage(WIDTH, HEIGHT, SPEED, ACCELERATION);
 
-
-
   /**
    * Se ejecuta al incio de la app.
    * Sirve para establecer configuraciones de la ventana de la app,
@@ -40,7 +37,6 @@ public class SpaceShipGameApp extends PApplet {
   @Override
   public void settings() {
     size(1024, 768);
-        
   }
 
   /**
@@ -50,14 +46,15 @@ public class SpaceShipGameApp extends PApplet {
   @Override
   public void setup() {
     String path = SpaceShipGameApp.class.getResource("").getPath() + "data/";
-    File file = new File(path);
-    System.out.println(file.getAbsolutePath());
+    starfield = new Gif(this, path +  "starfield.gif");
+    starfield.play();
 
-    starfield = loadImage(path +  "starfield.jpg");
-    cat = loadImage(path +  "cat.gif");
-
-    myCat = new Gif(this, path +  "cat.gif");
+    /* creamos la nave */
+    Gif myCat = new Gif(this, path +  "nyan.gif");
     myCat.play();
+    cat = Stage.createShip((PImage)myCat);
+    cat.w = 150;
+    cat.h = 100;
   }
 
   /**
@@ -69,25 +66,38 @@ public class SpaceShipGameApp extends PApplet {
    */
   @Override
   public void draw() {
+    hint(DISABLE_DEPTH_MASK);
+    image(starfield, 0, 0, width, height);
+    image(cat.face, cat.x, cat.y, cat.w, cat.h);
+
 
     if (keyPressed) {
       if (keyCode == UP)
-        yCat = yCat > 0 ? yCat - Y_SENS : 0;
+        cat.y = cat.y > 0 ? cat.y - Y_SENS : 0;
       else if (keyCode == DOWN)
-        yCat = yCat <= height ? yCat + Y_SENS : height;
+        cat.y = cat.y <= height-cat.h ? cat.y + Y_SENS : height;
       if (keyCode == LEFT)
-        xCat = xCat > 0 ? xCat - X_SENS : 0;
+        cat.x = cat.x > 0 ? cat.x - X_SENS : 0;
       else if (keyCode == RIGH)
-        xCat = xCat <= height ? xCat + X_SENS : height;
+        cat.x = cat.x <= height ? cat.x + X_SENS : height;
       else if (keyCode == 1) 
         STATUS = 1;
-      else if (keyCode == 0)
-        System.out.println("fire");
+      else if (keyCode == 0) {
+        st.addActor(Stage.createBullet(frameCount, cat));
+      }
     }
 
-    hint(DISABLE_DEPTH_MASK);
-    image(starfield, 0, 0, width, height);
-    image(myCat, xCat, yCat, 150, 100);
+    if (frameCount % 2 == 0) {
+      if (st.actors.size() > 0)
+        try {
+          for (Stage.Actor a : st.actors.values()) {
+            a.updateAge(frameCount);
+            if (!a.inStage)
+              st.removeActor(a);
+          }
+        } catch (Exception e) {}
+    }
+
 
   }
 
