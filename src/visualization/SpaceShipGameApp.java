@@ -50,9 +50,13 @@ public class SpaceShipGameApp extends PApplet {
     starfield.play();
 
     /* creamos la nave */
-    Gif myCat = new Gif(this, path +  "nyan.gif");
+    Gif myCat = new Gif(this, path +  "cat.gif");
+    PImage bullet = loadImage(path + "bullet.png");
+    PImage rock = loadImage(path + "helado.png");
     myCat.play();
     cat = Stage.createShip((PImage)myCat);
+    Stage.textures.put(Rol.CAT_BULLET, bullet);
+    Stage.textures.put(Rol.ICECREAM_ROCK, rock);
     cat.w = 150;
     cat.h = 100;
   }
@@ -71,7 +75,7 @@ public class SpaceShipGameApp extends PApplet {
     image(cat.face, cat.x, cat.y, cat.w, cat.h);
 
 
-    if (keyPressed) {
+    if (keyPressed && st.status == Status.PLAYING) {
       if (keyCode == UP)
         cat.y = cat.y > 0 ? cat.y - Y_SENS : 0;
       else if (keyCode == DOWN)
@@ -82,24 +86,26 @@ public class SpaceShipGameApp extends PApplet {
         cat.x = cat.x <= height ? cat.x + X_SENS : height;
       else if (keyCode == 1) 
         STATUS = 1;
-      else if (keyCode == 0) {
+      else if (key == ' ') 
         st.addActor(Stage.createBullet(frameCount, cat));
+      else if (key == 'p' || key == 'P') {
+        st.status = Status.PAUSE;
       }
+    } else if (keyPressed) {
+      if (st.status == Status.PAUSE)
+        st.status = Status.PLAYING;
     }
 
-    if (frameCount % 2 == 0) {
-      if (st.actors.size() > 0)
-        try {
-          for (Stage.Actor a : st.actors.values()) {
-            a.updateAge(frameCount);
-            if (!a.inStage)
-              st.removeActor(a);
-          }
-        } catch (Exception e) {}
-    }
-
-
+    try {
+      for (Stage.Actor a : st.actors.values()) {
+        if (st.status == Status.PLAYING)
+          a.updateAge(frameCount);
+        if (!a.inStage) {
+          st.removeActor(a);
+        } else {
+          image(a.face, a.x, a.y, a.w, a.h);
+        }
+      }
+    } catch (Exception e) {}
   }
-
-
 }

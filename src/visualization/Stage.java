@@ -21,13 +21,14 @@ public class Stage {
 	String background;
 	HashMap<Integer, Actor> actors;
 	static HashMap<Rol, PImage> textures;
-
+	Status status;
 	private static String path;
 
 	PImage bg;
 
 	static {
 		path = SpaceShipGameApp.class.getResource("").getPath() + "data/";
+		textures =  new HashMap<>();
 	}
 
 	static class Actor {
@@ -63,7 +64,6 @@ public class Stage {
 			// y = 300; calcular de donde viene y
 			x += (rTl) ? -1 * speed : 1 * speed;
 			inStage = rTl ? x > 0 : x < width;
-			System.out.println("frame:" + frame + " delta:" + delta + " x: " + x + " y: " + y + " inS" + inStage);
 		}
 	} 
 
@@ -73,9 +73,9 @@ public class Stage {
 		speed = s;
 		aceleration = a;
 		actors =  new HashMap<>();
-		textures =  new HashMap<>();
 		score = 0;
 		level = 0;
+		status = Status.PLAYING;
 	}
 
 	public void setBackground(String path) {
@@ -96,10 +96,10 @@ public class Stage {
 
 	public static Actor createBullet(int birth, Actor sender) {
 		System.out.println(birth);
-		Vector x1 =  new Vector(sender.x-30, sender.y);
+		Vector x1 =  new Vector(sender.x-80, sender.y);
 		Vector x2 =  new Vector(sender.x, sender.y);
-		Vector x3 =  new Vector(sender.x, sender.y-10);
-		Vector x4 =  new Vector(sender.x-30, sender.y-10);
+		Vector x3 =  new Vector(sender.x, sender.y-48);
+		Vector x4 =  new Vector(sender.x-80, sender.y-48);
 		LinkedList<Vector> vectors = new LinkedList<>();
 		vectors.addLast(x1);
 		vectors.addLast(x2);
@@ -108,9 +108,9 @@ public class Stage {
 		Polygon p =  new Polygon(vectors);
 		Actor b = new Actor(Rol.CAT_BULLET, p, true, false, birth);
 		b.x = sender.x;
-		b.y = sender.y;
-		b.w = 30;
-		b.h = 10;
+		b.y = sender.y-40;
+		b.w = 80;
+		b.h = 48;
 		b.face = Stage.textures.get(Rol.CAT_BULLET);
 		return b;
 	}
@@ -130,6 +130,13 @@ enum Rol {
     CAT_BULLET, 
     ICECREAM_ROCK
 };  
+
+enum Status {
+	PAUSE,
+	GAME_OVER,
+	PLAYING,
+	FINISH
+}
 
 
 
