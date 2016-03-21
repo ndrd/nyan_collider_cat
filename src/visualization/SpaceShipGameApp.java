@@ -17,18 +17,18 @@ public class SpaceShipGameApp extends PApplet {
   Stage.Actor cat;
   int xCat = 0;
   int yCat = 0;
-  final int X_SENS = 60;
-  final int Y_SENS = 60;
+  final int X_SENS = 15;
+  final int Y_SENS = 15;
   final int UP = 38;
   final int DOWN = 40;
   final int LEFT = 37;
   final int RIGH = 39;
   int STATUS = 0;
-  final int SPEED = 30;
+  final int SPEED = 20;
   final int WIDTH = 1024;
   final int HEIGHT = 768;
   final int ACCELERATION = 15;
-  final int DENSITY = 15; //15%
+  final int DENSITY = 9; //15%
 
   Stage st =  new Stage(WIDTH, HEIGHT, SPEED, ACCELERATION, DENSITY);
 
@@ -74,12 +74,15 @@ public class SpaceShipGameApp extends PApplet {
    */
   @Override
   public void draw() {
+    st.score++;
     hint(DISABLE_DEPTH_MASK);
     image(starfield, 0, 0, width, height);
     image(cat.face, cat.x, cat.y, cat.w, cat.h);
 
-    if (frameCount % 13 == 0)
-      st.generateRocks(frameCount);
+    fill(255);
+    textSize(40); 
+    text("SCORE", width/2-200, 40);
+    text(st.score, width/2, 40);
 
     if (keyPressed && st.status == Status.PLAYING) {
       if (keyCode == UP)
@@ -98,11 +101,23 @@ public class SpaceShipGameApp extends PApplet {
         st.status = Status.PAUSE;
         Gif g = (Gif)(cat.face);
         g.pause();
+        g = (Gif) starfield;
+        g.pause();
       }
     } else if (keyPressed) {
       if (st.status == Status.PAUSE && (key == 'p' || key == 'P')) {
         st.status = Status.PLAYING;
+        Gif g = (Gif)(cat.face);
+        g.play();
+        g = (Gif) starfield;
+        g.play();
+
       }
+    } 
+
+    if (st.status == Status.PLAYING) {
+      if (frameCount % 23 == 0)
+        st.generateRocks(frameCount);
     }
 
     try {
@@ -115,7 +130,7 @@ public class SpaceShipGameApp extends PApplet {
           if (a.rol != Rol.ICECREAM_ROCK)
             image(a.face, a.x, a.y, a.w, a.h);
           else
-            polygon(a.x,a.y, 40, 3, a.face);
+            drawRock(a);
         }
       }
     } catch (Exception e) {}
@@ -135,6 +150,16 @@ public class SpaceShipGameApp extends PApplet {
   }
 
   public void drawRock(Stage.Actor a) {
-    rect(a.x,a.y,75,75);
+    int radius = 50;
+    float angle = TWO_PI / 3;
+    beginShape();
+    texture(a.face);
+    for (float i = 0; i < TWO_PI; i += angle) {
+      float sx = a.x + cos(i) * radius;
+      float sy = a.y + sin(i) * radius;
+      vertex(sx, sy, 20,10);
+    }
+    endShape(CLOSE);
+
   }
 }
