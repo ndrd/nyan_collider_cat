@@ -25,8 +25,12 @@ public class ConvexCollisionDetection {
    * @param  polygonB segundo polígono
    * @return          el polígono intersección, es nulo si no existe.
    */
-  public Polygon detectCollision(Polygon polygonA, Polygon polygonB) {
+  public Polygon detectCollision(Polygon a, Polygon b) {
+    if (b.hull.a1.x <= a.hull.a3.x) 
+      if (a.intersects(b)) 
+        return new Polygon();
     return null;
+    
   }
 
   /**

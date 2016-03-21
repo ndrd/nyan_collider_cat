@@ -123,9 +123,9 @@ public class Stage {
 
 	public static Actor createBullet(int birth, Actor sender) {
 		Vector x1 =  new Vector(sender.x-80, sender.y);
-		Vector x2 =  new Vector(sender.x, sender.y);
+		Vector x2 =  new Vector(sender.x-80, sender.y-48);
 		Vector x3 =  new Vector(sender.x, sender.y-48);
-		Vector x4 =  new Vector(sender.x-80, sender.y-48);
+		Vector x4 =  new Vector(sender.x, sender.y);
 		LinkedList<Vector> vectors = new LinkedList<>();
 		vectors.addLast(x1);
 		vectors.addLast(x2);

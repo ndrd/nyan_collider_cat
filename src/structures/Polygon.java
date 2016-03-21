@@ -128,8 +128,6 @@ public class Polygon {
    */
   public boolean intersects(Polygon b) {
     Bounds h1 = b.hull;
-    System.out.println(h1.a1 + " - " + h1.a3);
-    System.out.println(hull.a1 + " - " + hull.a3);
     return !(hull.a3.x < h1.a1.x || h1.a3.x < hull.a1.x || hull.a4.y < h1.a3.y || h1.a4.y < hull.a3.y);
   }
 

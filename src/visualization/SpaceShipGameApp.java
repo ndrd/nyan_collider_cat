@@ -1,6 +1,7 @@
 package geom.visualization;
 
 import geom.math.Vector;
+import geom.algorithms.*;
 import java.io.File;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -12,7 +13,7 @@ import gifAnimation.*;
  * Juego de naves espaciales contra rocas.
  */
 public class SpaceShipGameApp extends PApplet {
-
+  ConvexCollisionDetection collider;
   Gif starfield;
   PImage gameOver;
   Stage.Actor cat;
@@ -52,6 +53,7 @@ public class SpaceShipGameApp extends PApplet {
   @Override
   public void setup() {
     String path = SpaceShipGameApp.class.getResource("").getPath() + "data/";
+    collider = new ConvexCollisionDetection();
     gameOver =  loadImage(path + "gameOver.png");
     starfield = new Gif(this, path +  "starfield.gif");
     starfield.play();
@@ -67,6 +69,8 @@ public class SpaceShipGameApp extends PApplet {
     bullet = Stage.createBullet(0, cat);
     cat.w = 150;
     cat.h = 100;
+    frameRate(44);
+
   }
 
   /**
@@ -84,8 +88,8 @@ public class SpaceShipGameApp extends PApplet {
 
     fill(255);
     textSize(40); 
-    text("SCORE", width/2-200, 40);
-    text(st.score, width/2, 40);
+    text("SCORE", width/2-200, 70);
+    text(st.score, width/2, 70);
 
     if (st.status == Status.GAME_OVER) {
       image(gameOver, 0, 0, width, height);
@@ -158,17 +162,13 @@ public class SpaceShipGameApp extends PApplet {
           }
           else if (a.rol == Rol.ICECREAM_ROCK) {
             drawRock(a);
-            if (a.skeleton.hull.a1.x <= cat.skeleton.hull.a3.x) {
-              if (cat.skeleton.intersects(a.skeleton)) {
+            if (collider.detectCollision(cat.skeleton, a.skeleton) != null) {
                 st.status = Status.GAME_OVER;
-              }
             } 
-            if (a.skeleton.hull.a1.x <= bullet.skeleton.hull.a3.x) {
-              if (bullet.skeleton.intersects(a.skeleton)) {
+            if (collider.detectCollision(bullet.skeleton, a.skeleton) != null) {
                 st.removeActor(a);
                 st.removeActor(bullet);
                 st.score += 1000;
-              }
             }
           }
         }
@@ -180,12 +180,11 @@ public class SpaceShipGameApp extends PApplet {
   }
 
   public void drawRock(Stage.Actor a) {
-    int radius = 50;
-    float angle = TWO_PI / 3;
+    int i = 90;
     beginShape();
     texture(a.face);
     for (Vector v : a.skeleton.points)
-      vertex((int)v.x, (int)v.y, 0.5f,0.5f);
+      vertex((int)v.x, (int)v.y, i++,i++);
     endShape(CLOSE);
 
   }
