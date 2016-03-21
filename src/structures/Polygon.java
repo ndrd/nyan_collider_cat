@@ -46,8 +46,7 @@ public class Polygon {
    * @return LinkedList<Vector> La lista de vértices
    */
   public LinkedList<Vector> getVertexes() {
-
-    return null;
+    return points;
   }
 
   /**

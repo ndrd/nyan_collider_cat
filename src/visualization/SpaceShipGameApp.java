@@ -1,9 +1,12 @@
 package geom.visualization;
 
+import geom.math.Vector;
 import java.io.File;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.event.Event;
+import processing.opengl.*;
+
 import gifAnimation.*;
 /**
  * Juego de naves espaciales contra rocas.
@@ -25,8 +28,9 @@ public class SpaceShipGameApp extends PApplet {
   final int WIDTH = 1024;
   final int HEIGHT = 768;
   final int ACCELERATION = 15;
+  final int DENSITY = 15; //15%
 
-  Stage st =  new Stage(WIDTH, HEIGHT, SPEED, ACCELERATION);
+  Stage st =  new Stage(WIDTH, HEIGHT, SPEED, ACCELERATION, DENSITY);
 
   /**
    * Se ejecuta al incio de la app.
@@ -36,7 +40,7 @@ public class SpaceShipGameApp extends PApplet {
    */
   @Override
   public void settings() {
-    size(1024, 768);
+    size(1024, 768, OPENGL);
   }
 
   /**
@@ -74,6 +78,8 @@ public class SpaceShipGameApp extends PApplet {
     image(starfield, 0, 0, width, height);
     image(cat.face, cat.x, cat.y, cat.w, cat.h);
 
+    if (frameCount % 13 == 0)
+      st.generateRocks(frameCount);
 
     if (keyPressed && st.status == Status.PLAYING) {
       if (keyCode == UP)
@@ -90,10 +96,13 @@ public class SpaceShipGameApp extends PApplet {
         st.addActor(Stage.createBullet(frameCount, cat));
       else if (key == 'p' || key == 'P') {
         st.status = Status.PAUSE;
+        Gif g = (Gif)(cat.face);
+        g.pause();
       }
     } else if (keyPressed) {
-      if (st.status == Status.PAUSE)
+      if (st.status == Status.PAUSE && (key == 'p' || key == 'P')) {
         st.status = Status.PLAYING;
+      }
     }
 
     try {
@@ -103,9 +112,29 @@ public class SpaceShipGameApp extends PApplet {
         if (!a.inStage) {
           st.removeActor(a);
         } else {
-          image(a.face, a.x, a.y, a.w, a.h);
+          if (a.rol != Rol.ICECREAM_ROCK)
+            image(a.face, a.x, a.y, a.w, a.h);
+          else
+            polygon(a.x,a.y, 40, 3, a.face);
         }
       }
     } catch (Exception e) {}
+  }
+
+
+  void polygon(float x, float y, float radius, int npoints, PImage face) {
+    float angle = TWO_PI / npoints;
+    beginShape();
+    texture(face);
+    for (float a = 0; a < TWO_PI; a += angle) {
+      float sx = x + cos(a) * radius;
+      float sy = y + sin(a) * radius;
+      vertex(sx, sy);
+    }
+    endShape(CLOSE);
+  }
+
+  public void drawRock(Stage.Actor a) {
+    rect(a.x,a.y,75,75);
   }
 }

@@ -23,12 +23,19 @@ public class Stage {
 	static HashMap<Rol, PImage> textures;
 	Status status;
 	private static String path;
+	int rocks;
+	int density;
+	static int nactors;
+
+	static Random rnd;
 
 	PImage bg;
 
 	static {
 		path = SpaceShipGameApp.class.getResource("").getPath() + "data/";
 		textures =  new HashMap<>();
+		rnd =  new Random();
+		nactors = 0;
 	}
 
 	static class Actor {
@@ -43,6 +50,7 @@ public class Stage {
 		int y;
 		int w;
 		int h;
+		int id;
 
 		Actor(Rol r, Polygon p, boolean inStg, boolean rtl, int b) {
 			rol = r;
@@ -59,15 +67,15 @@ public class Stage {
 		}
 
 		void updateAge(int frame) {
-			// calcula la velocidad de acuerdo al escenario 
-			int delta = frame - birth;
-			// y = 300; calcular de donde viene y
-			x += (rTl) ? -1 * speed : 1 * speed;
+			int speedI = (int)((rol == Rol.ICECREAM_ROCK) ? speed /4 : speed);
+			x += (rTl) ? -1 * speedI : 1 * speedI;
+			// if (rol == Rol.ICECREAM_ROCK)
+			// 	y = (int)(((id % 2 == 0) ? Math.cos(x) : Math.sin(x)) *  height);
 			inStage = rTl ? x > 0 : x < width;
 		}
 	} 
 
-	public Stage (int w, int h, int s, int a) {
+	public Stage (int w, int h, int s, int a, int d) {
 		width = w;
 		height = h;
 		speed = s;
@@ -76,6 +84,8 @@ public class Stage {
 		score = 0;
 		level = 0;
 		status = Status.PLAYING;
+		density = d;
+		rocks = 1;
 	}
 
 	public void setBackground(String path) {
@@ -87,6 +97,8 @@ public class Stage {
 	}
 
 	public void removeActor(Actor a) {
+		if (a.rol == Rol.ICECREAM_ROCK)
+			rocks--;
 		actors.remove(a.hashCode());
 	}
 
@@ -94,8 +106,16 @@ public class Stage {
 		textures.put(r, face);
 	}
 
+	public void generateRocks(int age) {
+		float e = actors.values().size();
+		e = e > 0 ? e : 1;
+		if (rocks/e < density) {
+			addActor(Stage.createSpaceRock(age));
+			rocks++;
+		}
+	}
+
 	public static Actor createBullet(int birth, Actor sender) {
-		System.out.println(birth);
 		Vector x1 =  new Vector(sender.x-80, sender.y);
 		Vector x2 =  new Vector(sender.x, sender.y);
 		Vector x3 =  new Vector(sender.x, sender.y-48);
@@ -108,10 +128,30 @@ public class Stage {
 		Polygon p =  new Polygon(vectors);
 		Actor b = new Actor(Rol.CAT_BULLET, p, true, false, birth);
 		b.x = sender.x;
-		b.y = sender.y-40;
+		b.y = sender.y;
 		b.w = 80;
 		b.h = 48;
 		b.face = Stage.textures.get(Rol.CAT_BULLET);
+		b.id = Stage.nactors++;
+		return b;
+	}
+
+	public static Actor createSpaceRock(int birth) {
+		int x = Stage.width;
+		int y = Stage.rnd.nextInt(height);
+		Vector x1 =  new Vector(x-80, y-80);
+		Vector x2 =  new Vector(x, y);
+		Vector x3 =  new Vector(x-48, y-48);
+		LinkedList<Vector> vectors = new LinkedList<>();
+		vectors.addLast(x1);
+		vectors.addLast(x2);
+		vectors.addLast(x3);
+		Polygon p =  new Polygon(vectors);
+		Actor b = new Actor(Rol.ICECREAM_ROCK, p, true, true, birth);
+		b.x = x;
+		b.y = y;
+		b.face = Stage.textures.get(Rol.ICECREAM_ROCK);
+		b.id = Stage.nactors++;
 		return b;
 	}
 
