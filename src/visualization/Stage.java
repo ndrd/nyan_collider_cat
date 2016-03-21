@@ -25,6 +25,7 @@ public class Stage {
 	Status status;
 	private static String path;
 	int rocks;
+	int bullet;
 	int density;
 	static int nactors;
 
@@ -88,6 +89,7 @@ public class Stage {
 		status = Status.PLAYING;
 		density = d;
 		rocks = 1;
+		bullet = 0;
 	}
 
 	public void setBackground(String path) {
@@ -101,6 +103,8 @@ public class Stage {
 	public void removeActor(Actor a) {
 		if (a.rol == Rol.ICECREAM_ROCK)
 			rocks--;
+		else if (a.rol == Rol.CAT_BULLET)
+			bullet = 0;
 		actors.remove(a.hashCode());
 	}
 
@@ -129,7 +133,7 @@ public class Stage {
 		vectors.addLast(x4);
 		Polygon p =  new Polygon(vectors);
 		Actor b = new Actor(Rol.CAT_BULLET, p, true, false, birth);
-		b.x = sender.x+130;
+		b.x = sender.x;
 		b.y = sender.y+10;
 		b.w = 80;
 		b.h = 48;

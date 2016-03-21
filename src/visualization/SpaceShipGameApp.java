@@ -16,6 +16,7 @@ public class SpaceShipGameApp extends PApplet {
   Gif starfield;
   PImage gameOver;
   Stage.Actor cat;
+  Stage.Actor bullet;
   int xCat = 0;
   int yCat = 0;
   final int X_SENS = 15;
@@ -55,12 +56,15 @@ public class SpaceShipGameApp extends PApplet {
     starfield = new Gif(this, path +  "starfield.gif");
     starfield.play();
     Gif myCat = new Gif(this, path +  "cat.gif");
-    PImage bullet = loadImage(path + "bullet.png");
+    PImage bulletImg = loadImage(path + "bullet.png");
     PImage rock = loadImage(path + "helado.png");
     myCat.play();
-    cat = Stage.createShip((PImage)myCat);
-    Stage.textures.put(Rol.CAT_BULLET, bullet);
+
+    Stage.textures.put(Rol.CAT_BULLET, bulletImg);
     Stage.textures.put(Rol.ICECREAM_ROCK, rock);
+
+    cat = Stage.createShip((PImage)myCat);
+    bullet = Stage.createBullet(0, cat);
     cat.w = 150;
     cat.h = 100;
   }
@@ -110,8 +114,13 @@ public class SpaceShipGameApp extends PApplet {
       }
       else if (keyCode == 1) 
         STATUS = 1;
-      else if (key == ' ') 
-        st.addActor(Stage.createBullet(frameCount, cat));
+      else if (key == ' ') {
+        if (st.bullet == 0) {
+          st.bullet++;
+          bullet = Stage.createBullet(frameCount, cat);
+          st.addActor(bullet);
+        }
+      }
       else if (key == 'p' || key == 'P') {
         st.status = Status.PAUSE;
         Gif g = (Gif)(cat.face);
@@ -144,13 +153,21 @@ public class SpaceShipGameApp extends PApplet {
         if (!a.inStage) {
           st.removeActor(a);
         } else {
-          if (a.rol != Rol.ICECREAM_ROCK)
+          if (a.rol == Rol.CAT_BULLET) {
             image(a.face, a.x, a.y, a.w, a.h);
-          else {
+          }
+          else if (a.rol == Rol.ICECREAM_ROCK) {
             drawRock(a);
             if (a.skeleton.hull.a1.x <= cat.skeleton.hull.a3.x) {
               if (cat.skeleton.intersects(a.skeleton)) {
                 st.status = Status.GAME_OVER;
+              }
+            } 
+            if (a.skeleton.hull.a1.x <= bullet.skeleton.hull.a3.x) {
+              if (bullet.skeleton.intersects(a.skeleton)) {
+                st.removeActor(a);
+                st.removeActor(bullet);
+                st.score += 1000;
               }
             }
           }
@@ -168,7 +185,7 @@ public class SpaceShipGameApp extends PApplet {
     beginShape();
     texture(a.face);
     for (Vector v : a.skeleton.points)
-      vertex((int)v.x, (int)v.y, 20,10);
+      vertex((int)v.x, (int)v.y, 0.5f,0.5f);
     endShape(CLOSE);
 
   }
