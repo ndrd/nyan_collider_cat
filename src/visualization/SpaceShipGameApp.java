@@ -74,6 +74,8 @@ public class SpaceShipGameApp extends PApplet {
    */
   @Override
   public void draw() {
+    image(starfield, 0, 0, width, height);
+
     hint(DISABLE_DEPTH_MASK);
 
     fill(255);
@@ -85,10 +87,6 @@ public class SpaceShipGameApp extends PApplet {
       image(gameOver, 0, 0, width, height);
       return;
     }
-
-    image(starfield, 0, 0, width, height);
-    image(cat.face, cat.x, cat.y, cat.w, cat.h);
-
 
     if (keyPressed && st.status == Status.PLAYING) {
       if (keyCode == UP) {
@@ -156,6 +154,8 @@ public class SpaceShipGameApp extends PApplet {
         }
       }
     } catch (Exception e) {}
+    image(cat.face, cat.x, cat.y, cat.w, cat.h);
+
   }
 
   public void drawRock(Stage.Actor a) {
