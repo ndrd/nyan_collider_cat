@@ -74,7 +74,6 @@ public class SpaceShipGameApp extends PApplet {
    */
   @Override
   public void draw() {
-    st.score++;
     hint(DISABLE_DEPTH_MASK);
     image(starfield, 0, 0, width, height);
     image(cat.face, cat.x, cat.y, cat.w, cat.h);
@@ -116,6 +115,8 @@ public class SpaceShipGameApp extends PApplet {
     } 
 
     if (st.status == Status.PLAYING) {
+      st.score++;
+
       if (frameCount % 23 == 0)
         st.generateRocks(frameCount);
     }

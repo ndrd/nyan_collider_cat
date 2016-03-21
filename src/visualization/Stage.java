@@ -1,4 +1,4 @@
-package geom.visualization;
+ package geom.visualization;
 
 import geom.structures.Polygon;
 import geom.math.Vector;
@@ -127,8 +127,8 @@ public class Stage {
 		vectors.addLast(x4);
 		Polygon p =  new Polygon(vectors);
 		Actor b = new Actor(Rol.CAT_BULLET, p, true, false, birth);
-		b.x = sender.x;
-		b.y = sender.y;
+		b.x = sender.x+130;
+		b.y = sender.y+10;
 		b.w = 80;
 		b.h = 48;
 		b.face = Stage.textures.get(Rol.CAT_BULLET);

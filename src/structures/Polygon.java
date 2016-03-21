@@ -1,7 +1,9 @@
 package geom.structures;
 
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import geom.math.Vector;
+import java.util.Comparator;
 
 /**
  * Representa un polígono simple en dos dimensiones, como una sucesión
@@ -10,9 +12,26 @@ import geom.math.Vector;
  */
 public class Polygon {
 
+  /**
+  * El rectángulo que contiene al polígono
+  */
+  class Bounds {
+    Vector a1;
+    Vector a2;
+    Vector a3;
+    Vector a4;
+
+    Bounds(Vector a1, Vector a2, Vector a3, Vector a4) {
+      this.a1 = a1;
+      this.a2 = a2;
+      this.a3 = a3;
+      this.a4 = a4;
+    }
+  }
+
   LinkedList<Vector> points;
-  int centroidX;
-  int centrodY;
+  PriorityQueue<Vector> orderedPoints;
+  Bounds hull;
   /**
    * Construye un polígono sin puntos.
    *
@@ -27,7 +46,14 @@ public class Polygon {
    * @param points Los puntos que representarán al polígono.
    */
   public Polygon(LinkedList<Vector> pts) {
-      points = pts;
+      orderedPoints = new PriorityQueue<Vector>(3, new Comparator<Vector>(){
+        public int compare(Vector a, Vector b) {
+          return (int)((a.x - b.x) != 0 ? a.x - b.x : a.y - b.y);
+        }
+      });
+      for (Vector v : pts) {
+        orderedPoints.offer(v);
+      }
   }
 
   /**
@@ -82,10 +108,21 @@ public class Polygon {
   }
 
   /**
+   * Verifica si un polígono se intersecta con él.
+   *
+   * @param Polygon El polígono a verificar.
+   * @return boolean Si el polígono se intersecta o no.
+   */
+  public boolean intersects(Polygon b) {
+    return false;
+  }
+
+  /**
    * Limpia el polígono.
    *
    */
   public void clear() {
+
   }
 
   /**
