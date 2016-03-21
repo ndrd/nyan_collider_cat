@@ -2,6 +2,7 @@
 
 import geom.structures.Polygon;
 import geom.math.Vector;
+import geom.algorithms.*;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -68,10 +69,11 @@ public class Stage {
 
 		void updateAge(int frame) {
 			int speedI = (int)((rol == Rol.ICECREAM_ROCK) ? speed /4 : speed);
-			x += (rTl) ? -1 * speedI : 1 * speedI;
-			// if (rol == Rol.ICECREAM_ROCK)
-			// 	y = (int)(((id % 2 == 0) ? Math.cos(x) : Math.sin(x)) *  height);
+			int deltaX = (rTl) ? -1 * speedI : 1 * speedI;
+			int deltaY = 0;
+			x += deltaX;
 			inStage = rTl ? x > 0 : x < width;
+			skeleton.traslate(deltaX, deltaY);
 		}
 	} 
 
@@ -137,26 +139,27 @@ public class Stage {
 	}
 
 	public static Actor createSpaceRock(int birth) {
-		int x = Stage.width;
-		int y = Stage.rnd.nextInt(height);
-		Vector x1 =  new Vector(x-80, y-80);
-		Vector x2 =  new Vector(x, y);
-		Vector x3 =  new Vector(x-48, y-48);
-		LinkedList<Vector> vectors = new LinkedList<>();
-		vectors.addLast(x1);
-		vectors.addLast(x2);
-		vectors.addLast(x3);
-		Polygon p =  new Polygon(vectors);
+		Polygon p = SteadyGrowth.generateRandomPolygon(3);
 		Actor b = new Actor(Rol.ICECREAM_ROCK, p, true, true, birth);
-		b.x = x;
-		b.y = y;
+		Vector centroid = p.getCentroid();
+		b.x = (int) centroid.x;
+		b.y = (int) centroid.y;
 		b.face = Stage.textures.get(Rol.ICECREAM_ROCK);
 		b.id = Stage.nactors++;
 		return b;
 	}
 
 	public static Actor createShip(PImage image) {
-		Polygon p =  new Polygon();
+		Vector x1 =  new Vector(0, Stage.height / 2);
+		Vector x2 =  new Vector(0, Stage.height / 2 + 100);
+		Vector x3 =  new Vector(150, Stage.height / 2 + 100);
+		Vector x4 =  new Vector(150, Stage.height / 2);
+		LinkedList<Vector> vectors = new LinkedList<>();
+		vectors.addLast(x1);
+		vectors.addLast(x2);
+		vectors.addLast(x3);
+		vectors.addLast(x4);
+		Polygon p =  new Polygon(vectors);
 		Actor cat = new Actor(Rol.CAT_SHIP, p, true, false, 0);
 		cat.face = image;
 		cat.x = 0;

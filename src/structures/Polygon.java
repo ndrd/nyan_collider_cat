@@ -54,6 +54,33 @@ public class Polygon {
       for (Vector v : pts) {
         orderedPoints.offer(v);
       }
+      points = pts;
+      hull = getBounds();
+  }
+
+  private Bounds getBounds() {
+    double minX = Integer.MAX_VALUE;
+    double minY = Integer.MAX_VALUE;
+    double maxX = Integer.MIN_VALUE;
+    double maxY = Integer.MIN_VALUE;
+
+    for (Vector o : points) {
+      if (o.x < minX)
+        minX = o.x;
+      if (o.x > maxX)
+        maxX = o.x;
+      if (o.y < minY)
+        minY = o.y;
+      if (o.y > maxY)
+        maxY = o.y;
+    }
+    return new Bounds(
+      new Vector(minX, maxY),
+      new Vector(minX, minY),
+      new Vector(maxX, minY),
+      new Vector(maxX, maxY)
+    );
+
   }
 
   /**
@@ -63,6 +90,8 @@ public class Polygon {
    */
   public void add(Vector point) {
     points.addLast(point);
+    if (point.x < hull.a1.x || point.y < hull.a2.y || point.x > hull.a3.x || point.y > hull.a1.y)
+      hull = getBounds();
   }
 
   /**
@@ -108,21 +137,33 @@ public class Polygon {
   }
 
   /**
-   * Verifica si un polígono se intersecta con él.
+   * Verifica si un polígono se intersecta con él comparando los
+   * vértices extremos
    *
    * @param Polygon El polígono a verificar.
    * @return boolean Si el polígono se intersecta o no.
    */
   public boolean intersects(Polygon b) {
-    return false;
+    Bounds h1 = b.hull;
+    return !(hull.a3.x < h1.a1.x || h1.a4.x < hull.a1.x || hull.a3.y < h1.a4.y || h1.a3.y < hull.a4.y);
   }
+
+  public void traslate(double dx, double dy) {
+    for (Vector v : points) {
+      v.x += dx;
+      v.y += dy;
+    }
+  }
+
+  public Vector getCentroid() {
+    return new Vector((hull.a3.x + hull.a1.x) * 0.5 ,(hull.a1.y + hull.a2.y) * 0.5);
+  } 
 
   /**
    * Limpia el polígono.
    *
    */
   public void clear() {
-
   }
 
   /**
