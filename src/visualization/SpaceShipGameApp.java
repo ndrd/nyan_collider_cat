@@ -85,6 +85,9 @@ public class SpaceShipGameApp extends PApplet {
 
     if (st.status == Status.GAME_OVER) {
       image(gameOver, 0, 0, width, height);
+      text("SCORE", width/2-200, 40);
+      text(st.score, width/2, 40);
+
       return;
     }
 
@@ -94,7 +97,7 @@ public class SpaceShipGameApp extends PApplet {
         cat.skeleton.traslate(0, -Y_SENS);
       } 
       else if (keyCode == DOWN) {
-        cat.y = cat.y <= height-cat.h ? cat.y + Y_SENS : height;
+        cat.y = cat.y < height-cat.h ? cat.y + Y_SENS : height-cat.h;
         cat.skeleton.traslate(0,Y_SENS);
       }
       if (keyCode == LEFT) {
@@ -154,6 +157,7 @@ public class SpaceShipGameApp extends PApplet {
         }
       }
     } catch (Exception e) {}
+    System.out.println("y: "+cat.y);
     image(cat.face, cat.x, cat.y, cat.w, cat.h);
 
   }
