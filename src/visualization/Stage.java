@@ -139,7 +139,7 @@ public class Stage {
 	}
 
 	public static Actor createSpaceRock(int birth) {
-		Polygon p = SteadyGrowth.generateRandomPolygon(3);
+		Polygon p = SteadyGrowth.generateRandomPolygon(3 + Stage.rnd.nextInt(10));
 		Actor b = new Actor(Rol.ICECREAM_ROCK, p, true, true, birth);
 		Vector centroid = p.getCentroid();
 		b.x = (int) centroid.x;

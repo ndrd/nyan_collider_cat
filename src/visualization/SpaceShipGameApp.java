@@ -14,6 +14,7 @@ import gifAnimation.*;
 public class SpaceShipGameApp extends PApplet {
 
   Gif starfield;
+  PImage gameOver;
   Stage.Actor cat;
   int xCat = 0;
   int yCat = 0;
@@ -28,7 +29,7 @@ public class SpaceShipGameApp extends PApplet {
   final int WIDTH = 1024;
   final int HEIGHT = 768;
   final int ACCELERATION = 15;
-  final int DENSITY = 9; //15%
+  final int DENSITY = 2; //15%
 
   Stage st =  new Stage(WIDTH, HEIGHT, SPEED, ACCELERATION, DENSITY);
 
@@ -50,10 +51,9 @@ public class SpaceShipGameApp extends PApplet {
   @Override
   public void setup() {
     String path = SpaceShipGameApp.class.getResource("").getPath() + "data/";
+    gameOver =  loadImage(path + "gameOver.png");
     starfield = new Gif(this, path +  "starfield.gif");
     starfield.play();
-
-    /* creamos la nave */
     Gif myCat = new Gif(this, path +  "cat.gif");
     PImage bullet = loadImage(path + "bullet.png");
     PImage rock = loadImage(path + "helado.png");
@@ -75,23 +75,38 @@ public class SpaceShipGameApp extends PApplet {
   @Override
   public void draw() {
     hint(DISABLE_DEPTH_MASK);
-    image(starfield, 0, 0, width, height);
-    image(cat.face, cat.x, cat.y, cat.w, cat.h);
 
     fill(255);
     textSize(40); 
     text("SCORE", width/2-200, 40);
     text(st.score, width/2, 40);
 
+    if (st.status == Status.GAME_OVER) {
+      image(gameOver, 0, 0, width, height);
+      return;
+    }
+
+    image(starfield, 0, 0, width, height);
+    image(cat.face, cat.x, cat.y, cat.w, cat.h);
+
+
     if (keyPressed && st.status == Status.PLAYING) {
-      if (keyCode == UP)
+      if (keyCode == UP) {
         cat.y = cat.y > 0 ? cat.y - Y_SENS : 0;
-      else if (keyCode == DOWN)
+        cat.skeleton.traslate(0, -Y_SENS);
+      } 
+      else if (keyCode == DOWN) {
         cat.y = cat.y <= height-cat.h ? cat.y + Y_SENS : height;
-      if (keyCode == LEFT)
+        cat.skeleton.traslate(0,Y_SENS);
+      }
+      if (keyCode == LEFT) {
         cat.x = cat.x > 0 ? cat.x - X_SENS : 0;
-      else if (keyCode == RIGH)
+        cat.skeleton.traslate(-X_SENS, 0);
+      }
+      else if (keyCode == RIGH) {
         cat.x = cat.x <= height ? cat.x + X_SENS : height;
+        cat.skeleton.traslate(X_SENS, 0);
+      }
       else if (keyCode == 1) 
         STATUS = 1;
       else if (key == ' ') 
@@ -130,24 +145,17 @@ public class SpaceShipGameApp extends PApplet {
         } else {
           if (a.rol != Rol.ICECREAM_ROCK)
             image(a.face, a.x, a.y, a.w, a.h);
-          else
+          else {
             drawRock(a);
+            if (a.skeleton.hull.a1.x <= cat.skeleton.hull.a3.x) {
+              if (cat.skeleton.intersects(a.skeleton)) {
+                st.status = Status.GAME_OVER;
+              }
+            }
+          }
         }
       }
     } catch (Exception e) {}
-  }
-
-
-  void polygon(float x, float y, float radius, int npoints, PImage face) {
-    float angle = TWO_PI / npoints;
-    beginShape();
-    texture(face);
-    for (float a = 0; a < TWO_PI; a += angle) {
-      float sx = x + cos(a) * radius;
-      float sy = y + sin(a) * radius;
-      vertex(sx, sy);
-    }
-    endShape(CLOSE);
   }
 
   public void drawRock(Stage.Actor a) {
@@ -155,11 +163,8 @@ public class SpaceShipGameApp extends PApplet {
     float angle = TWO_PI / 3;
     beginShape();
     texture(a.face);
-    for (float i = 0; i < TWO_PI; i += angle) {
-      float sx = a.x + cos(i) * radius;
-      float sy = a.y + sin(i) * radius;
-      vertex(sx, sy, 20,10);
-    }
+    for (Vector v : a.skeleton.points)
+      vertex((int)v.x, (int)v.y, 20,10);
     endShape(CLOSE);
 
   }

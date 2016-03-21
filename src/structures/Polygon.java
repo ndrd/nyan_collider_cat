@@ -12,26 +12,9 @@ import java.util.Comparator;
  */
 public class Polygon {
 
-  /**
-  * El rectángulo que contiene al polígono
-  */
-  class Bounds {
-    Vector a1;
-    Vector a2;
-    Vector a3;
-    Vector a4;
-
-    Bounds(Vector a1, Vector a2, Vector a3, Vector a4) {
-      this.a1 = a1;
-      this.a2 = a2;
-      this.a3 = a3;
-      this.a4 = a4;
-    }
-  }
-
-  LinkedList<Vector> points;
+  public LinkedList<Vector> points;
   PriorityQueue<Vector> orderedPoints;
-  Bounds hull;
+  public Bounds hull;
   /**
    * Construye un polígono sin puntos.
    *
@@ -145,11 +128,17 @@ public class Polygon {
    */
   public boolean intersects(Polygon b) {
     Bounds h1 = b.hull;
-    return !(hull.a3.x < h1.a1.x || h1.a4.x < hull.a1.x || hull.a3.y < h1.a4.y || h1.a3.y < hull.a4.y);
+    System.out.println(h1.a1 + " - " + h1.a3);
+    System.out.println(hull.a1 + " - " + hull.a3);
+    return !(hull.a3.x < h1.a1.x || h1.a3.x < hull.a1.x || hull.a4.y < h1.a3.y || h1.a4.y < hull.a3.y);
   }
 
   public void traslate(double dx, double dy) {
     for (Vector v : points) {
+      v.x += dx;
+      v.y += dy;
+    }
+    for (Vector v : hull.points) {
       v.x += dx;
       v.y += dy;
     }
