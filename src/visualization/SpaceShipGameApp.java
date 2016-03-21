@@ -13,6 +13,7 @@ import gifAnimation.*;
  * Juego de naves espaciales contra rocas.
  */
 public class SpaceShipGameApp extends PApplet {
+
   ConvexCollisionDetection collider;
   Gif starfield;
   PImage gameOver;
@@ -32,6 +33,7 @@ public class SpaceShipGameApp extends PApplet {
   final int HEIGHT = 768;
   final int ACCELERATION = 15;
   final int DENSITY = 2; //15%
+  int level = 23;
 
   Stage st =  new Stage(WIDTH, HEIGHT, SPEED, ACCELERATION, DENSITY);
 
@@ -145,8 +147,11 @@ public class SpaceShipGameApp extends PApplet {
 
     if (st.status == Status.PLAYING) {
       st.score++;
+      if (st.score % 1000 == 0) {
+        level =  level <= 6 ? 6 : --level;
+      }
 
-      if (frameCount % 23 == 0)
+      if (frameCount % level == 0)
         st.generateRocks(frameCount);
     }
 
@@ -174,7 +179,6 @@ public class SpaceShipGameApp extends PApplet {
         }
       }
     } catch (Exception e) {}
-    System.out.println("y: "+cat.y);
     image(cat.face, cat.x, cat.y, cat.w, cat.h);
 
   }
