@@ -1,7 +1,8 @@
 package geom.structures;
 
 import java.util.LinkedList;
-import java.util.PriorityQueue;
+import java.util.TreeMap;
+import java.util.Map;
 import geom.math.Vector;
 import java.util.Comparator;
 
@@ -13,7 +14,6 @@ import java.util.Comparator;
 public class Polygon {
 
   public LinkedList<Vector> points;
-  PriorityQueue<Vector> orderedPoints;
   public Bounds hull;
   /**
    * Construye un polígono sin puntos.
@@ -155,6 +155,32 @@ public class Polygon {
       inside &= Vector.areaSign(point, p.get(i), p.get(i+1%p.size())) > 0;
     }
     return inside;
+  }
+
+  /* devuelve el vector con la mínima coordenada en y */
+  private Vector getMinY(LinkedList<Vector> points) {
+    double miny = Double.MAX_VALUE;
+    Vector min = null;
+    for (Vector v : points) {
+        if (miny > v.y) {
+          min = v;
+          miny = v.y;
+        }
+    }
+    return min;
+  }
+
+  private LinkedList<Vector> sortBySlope(Vector sentinel, LinkedList<Vector> points) {
+    TreeMap<Double, Vector> slopes =  new TreeMap<>();
+    for (Vector v : points) {
+      double m = (v.y - sentinel.y) / (v.x - sentinel.x);
+      slopes.put(m,v);
+    }
+    LinkedList<Vector> vectorsBySlope =  new LinkedList<>();
+    for (Map.Entry<Double, Vector> node : slopes.entrySet()) {
+      vectorsBySlope.addLast(node.getValue());
+    }
+    return vectorsBySlope;
   }
 
   /**
