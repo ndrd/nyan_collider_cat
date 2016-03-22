@@ -175,49 +175,51 @@ public class Vector {
    * @return       un arreglo con n puntos generados
    */
   public static Vector[] randomPoints (int n, double start, double end) {
+
     Random random = new Random();
     double range = end - start;
 
     Vector[] points = new Vector[n];
     int idx = 0;
-
+    int mt = 0;
     while(idx < n) {
 
       // Genera un nuevo vector
       double x = Math.round((random.nextDouble() * range) + start);
       double y = Math.round((random.nextDouble() * range) + start);
       Vector p = new Vector(x, y);
+
       if(idx < 2) {
+
         // Lo guardamos
         points[idx] = p;
         idx++;
       }
       else {
 
-        // Checamos que no haya tres colineales
+       // Checamos que no haya tres colineales
         boolean areCollinear = false;
         for (int i = 0; i < idx; i++) {
           for (int j = 0; j < idx; j++) {
             if(i != j) {
               boolean test = Vector.areCollinear(points[i], points[j], p);
-              areCollinear |= test;
+              areCollinear = areCollinear || test;
             }
           }
         }
 
         // No hay colineales
-        if(!areCollinear) {
-
+        if(!areCollinear || mt > 50) {
           // Lo guardamos
           points[idx] = p;
           idx++;
+        } else {
+          mt++;
         }
       }
     }
-
-     return points;
+    return points;
   }
-
   @Override
   public boolean equals(Object obj) {
     Vector vec = (Vector) obj;

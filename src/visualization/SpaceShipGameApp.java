@@ -61,7 +61,7 @@ public class SpaceShipGameApp extends PApplet {
     starfield.play();
     Gif myCat = new Gif(this, path +  "cat.gif");
     PImage bulletImg = loadImage(path + "bullet.png");
-    PImage rock = loadImage(path + "helado.png");
+    PImage rock = loadImage(path + "rocks.jpg");
     myCat.play();
 
     Stage.textures.put(Rol.CAT_BULLET, bulletImg);
