@@ -3,14 +3,14 @@ package geom.math;
 import java.util.Random;
 
 /**
- * Representa un vector en dos dimensiones, contiene operaciones básicas
+ * Representa un vector en dos o tres dimensiones, contiene operaciones básicas
  * de vectores.
  *
  */
 public class Vector {
 
   // Coordenadas
-  public double x, y;
+  public double x, y, z;
 
   /**
    * Construye el vector en el origen.
@@ -125,10 +125,7 @@ public class Vector {
   }
 
   /**
-   * Calcula el signo del área del paralelogramo de los
-   * vectores a-b, a-c.
-   * Sirve para determinar si c está del lado izquierdo
-   * o derecho del segmento dirigido de a a b.
+   * Calcula el signo del determinante.
    * 
    * @param a Primer vector
    * @param b Segundo vector
@@ -136,6 +133,7 @@ public class Vector {
    * @return double signo del determinante
    */
   public static double areaSign(Vector a, Vector b, Vector c) {
+
     // Transladamos los puntos para que d quede en el origen
     double ax = a.x - c.x, ay = a.y - c.y;
     double bx = b.x - c.x, by = b.y - c.y;
@@ -181,45 +179,17 @@ public class Vector {
 
     Vector[] points = new Vector[n];
     int idx = 0;
-    int mt = 0;
     while(idx < n) {
 
       // Genera un nuevo vector
       double x = Math.round((random.nextDouble() * range) + start);
       double y = Math.round((random.nextDouble() * range) + start);
       Vector p = new Vector(x, y);
-
-      if(idx < 2) {
-
-        // Lo guardamos
-        points[idx] = p;
-        idx++;
-      }
-      else {
-
-       // Checamos que no haya tres colineales
-        boolean areCollinear = false;
-        for (int i = 0; i < idx; i++) {
-          for (int j = 0; j < idx; j++) {
-            if(i != j) {
-              boolean test = Vector.areCollinear(points[i], points[j], p);
-              areCollinear = areCollinear || test;
-            }
-          }
-        }
-
-        // No hay colineales
-        if(!areCollinear || mt > 50) {
-          // Lo guardamos
-          points[idx] = p;
-          idx++;
-        } else {
-          mt++;
-        }
-      }
+      points[idx++] = p;
     }
     return points;
   }
+
   @Override
   public boolean equals(Object obj) {
     Vector vec = (Vector) obj;

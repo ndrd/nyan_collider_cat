@@ -145,9 +145,9 @@ public class Stage {
 	* de la nave que la esta lanzando
 	*/
 	public static Actor createBullet(int birth, Actor sender) {
-		Vector x1 =  new Vector(sender.x-80, sender.y);
-		Vector x2 =  new Vector(sender.x-80, sender.y-48);
-		Vector x3 =  new Vector(sender.x, sender.y-48);
+		Vector x1 =  new Vector(sender.x-150, sender.y);
+		Vector x2 =  new Vector(sender.x-150, sender.y-100);
+		Vector x3 =  new Vector(sender.x, sender.y-100);
 		Vector x4 =  new Vector(sender.x, sender.y);
 		LinkedList<Vector> vectors = new LinkedList<>();
 		vectors.addLast(x1);
@@ -170,10 +170,12 @@ public class Stage {
 	* en el algoritmo SteadyGrowth
 	*/
 	public static Actor createSpaceRock(int birth) {
-		Polygon p = SteadyGrowth.generateRandomPolygon(3 + Stage.rnd.nextInt(5));
-		p.traslate(width,0);
+		Polygon p = SteadyGrowth.generateRandomPolygon(3 + Stage.rnd.nextInt(50));
+		Vector xx =  p.hull.a1;
+		Vector centroid  = p.getCentroid();
+		p.traslate(width-xx.x, -Stage.rnd.nextInt(height/2));
+
 		Actor b = new Actor(Rol.ICECREAM_ROCK, p, true, true, birth);
-		Vector centroid = p.getCentroid();
 		b.x = (int) centroid.x;
 		b.y = (int) centroid.y;
 		b.face = Stage.textures.get(Rol.ICECREAM_ROCK);

@@ -159,13 +159,15 @@ public class Polygon {
   }
 
   /* devuelve el vector con la mínima coordenada en y */
-  private Vector getMinY(LinkedList<Vector> points) {
+  private Vector getMin(LinkedList<Vector> points) {
     double miny = Double.MAX_VALUE;
+    double minx = Double.MAX_VALUE;
     Vector min = null;
     for (Vector v : points) {
-        if (miny > v.y) {
+        if ( (miny > v.y && minx > v.x) || (miny == v.y && minx > v.x) || (miny > v.y && minx == v.x) ) {
           min = v;
           miny = v.y;
+          minx = v.x;
         }
     }
     return min;
@@ -175,11 +177,14 @@ public class Polygon {
     TreeMap<Double, Vector> slopes =  new TreeMap<>();
     for (Vector v : points) {
       double m = (v.y - sentinel.y) / (v.x - sentinel.x);
-      slopes.put(m,v);
+      if (!v.equals(sentinel))
+        slopes.put(m,v);
     }
     ArrayList<Vector> vectorsBySlope =  new ArrayList<>();
     for (Map.Entry<Double, Vector> node : slopes.entrySet()) {
       vectorsBySlope.add(node.getValue());
+      System.out.println("m: "+node.getKey() + " - " + node.getValue());
+
     }
     return vectorsBySlope;
   }
@@ -219,28 +224,17 @@ public class Polygon {
   public Polygon getConvexHull() {
     LinkedList<Vector> hullPoints = new LinkedList<>();
     /* O(n) */
-    Vector minY =  getMinY(points);
-    /* O(nlogn) */
-    ArrayList<Vector> pts = sortBySlope(minY, points);
-    /* anclamos el primer y ultimo punto */
-    pts.add(minY);
-    pts.set(0, minY);
-    int n = points.size();
+    Vector v = null;
+    Vector min =  getMin(points);
 
-    /* puntos del cierre convexo */
-    int m = 1;
-    for (int i = 2; i < n; ++i) {
-      /* encuentra el próximo punto válido dentro del cierre convexo */
-      while (Vector.areaSign(pts.get(m-1), pts.get(m), pts.get(i)) <= 0) {
-        if (m > 1)
-          m -= 1;
-        else if (i == n)
-          break;
-        else
-          i++;
-      }
-      hullPoints.add(pts.get(++m));
+    System.out.println("min: "+min);
+
+    for (Vector o : points) {
+      System.out.println("o: "+o);
     }
+    /* O(nlogn) */
+    ArrayList<Vector> pts = sortBySlope(min, points);
+    /* anclamos el primer y ultimo punto */
 
     return new Polygon(hullPoints);
   }
