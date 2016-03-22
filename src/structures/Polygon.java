@@ -2,6 +2,7 @@ package geom.structures;
 
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.Map;
 import geom.math.Vector;
@@ -183,8 +184,6 @@ public class Polygon {
     ArrayList<Vector> vectorsBySlope =  new ArrayList<>();
     for (Map.Entry<Double, Vector> node : slopes.entrySet()) {
       vectorsBySlope.add(node.getValue());
-      System.out.println("m: "+node.getKey() + " - " + node.getValue());
-
     }
     return vectorsBySlope;
   }
@@ -222,21 +221,44 @@ public class Polygon {
    * @return Polygon El cierre convexo del polígono
    */
   public Polygon getConvexHull() {
-    LinkedList<Vector> hullPoints = new LinkedList<>();
+    if (points < 3)
+      return new Polygon(points);
+
     /* O(n) */
     Vector v = null;
     Vector min =  getMin(points);
-
-    System.out.println("min: "+min);
-
-    for (Vector o : points) {
-      System.out.println("o: "+o);
-    }
     /* O(nlogn) */
-    ArrayList<Vector> pts = sortBySlope(min, points);
-    /* anclamos el primer y ultimo punto */
+    ArrayList<Vector> sorted = sortBySlope(min, points);
+    /* metemos los primeros dos puntos */
+     Stack<Vector> stack = new Stack<Vector>();
+     stack.push(sorted.get(0));
+     stack.push(sorted.get(1));
 
-    return new Polygon(hullPoints);
+     for (int i = 2; i < sorted.size(); i++) {
+
+         Vector start = sorted.get(i);
+         Vector middle = stack.pop();
+         Vector end = stack.peek();
+
+         int turn = Vector.areaSign(end, middle, start);
+
+         switch(turn) {
+             case -1:
+                 stack.push(middle);
+                 stack.push(start);
+                 break;
+             case 1:
+                 i--;
+                 break;
+             case 0:
+                 stack.push(start);
+                 break;
+         }
+     }
+
+   // close the hull
+   stack.push(sorted.get(0));
+  return new Polygon(new LinkedList<Vector>(stack));
   }
 
   /**
