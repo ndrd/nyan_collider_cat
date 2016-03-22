@@ -93,6 +93,7 @@ public class SpaceShipGameApp extends PApplet {
     text("SCORE", width/2-200, 70);
     text(st.score, width/2, 70);
 
+    /* verificamos el estado del juego */
     if (st.status == Status.GAME_OVER) {
       image(gameOver, 0, 0, width, height);
       text("SCORE", width/2-200, 40);
@@ -101,6 +102,7 @@ public class SpaceShipGameApp extends PApplet {
       return;
     }
 
+    /* cambiamos la posicion  de acuerdo a los controles */
     if (keyPressed && st.status == Status.PLAYING) {
       if (keyCode == UP) {
         cat.y = cat.y > 0 ? cat.y - Y_SENS : 0;
@@ -127,6 +129,7 @@ public class SpaceShipGameApp extends PApplet {
           st.addActor(bullet);
         }
       }
+      /* se pone al juego en estado de pausa */
       else if (key == 'p' || key == 'P') {
         st.status = Status.PAUSE;
         Gif g = (Gif)(cat.face);
@@ -135,6 +138,7 @@ public class SpaceShipGameApp extends PApplet {
         g.pause();
       }
     } else if (keyPressed) {
+      /* sale del estado de pausa */
       if (st.status == Status.PAUSE && (key == 'p' || key == 'P')) {
         st.status = Status.PLAYING;
         Gif g = (Gif)(cat.face);
@@ -144,27 +148,34 @@ public class SpaceShipGameApp extends PApplet {
 
       }
     } 
-
+    /* Aumenta el score si esta en juego */ 
     if (st.status == Status.PLAYING) {
       st.score++;
       if (st.score % 1000 == 0) {
-        level =  level <= 6 ? 6 : --level;
+        level =  level <= 4 ? 4 : --level;
       }
 
+      /* genera rocas de acuerdo al nivel */
       if (frameCount % level == 0)
         st.generateRocks(frameCount);
     }
 
+    /* como estamos eliminando y agregando a un Hash debemos tener cuidado con
+    las excepciones de concurrencia */
     try {
+       /* dibuja a los actores dentro del escenario */
       for (Stage.Actor a : st.actors.values()) {
         if (st.status == Status.PLAYING)
           a.updateAge(frameCount);
         if (!a.inStage) {
+          /* lo elimina si ya no se ve dentro del escenario */
           st.removeActor(a);
         } else {
           if (a.rol == Rol.CAT_BULLET) {
             image(a.face, a.x, a.y, a.w, a.h);
           }
+          /* nuestro algoritmo de barrido funciona con las rocas, sobre ellas se verifica 
+          si se han generado colisiones o no */
           else if (a.rol == Rol.ICECREAM_ROCK) {
             drawRock(a);
             if (collider.detectCollision(cat.skeleton, a.skeleton) != null) {
@@ -183,6 +194,7 @@ public class SpaceShipGameApp extends PApplet {
 
   }
 
+  /* dibujamos las rocas dentro del juego */
   public void drawRock(Stage.Actor a) {
     int i = 90;
     beginShape();

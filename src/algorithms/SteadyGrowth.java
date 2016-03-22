@@ -2,8 +2,10 @@ package geom.algorithms;
 
 import geom.structures.Polygon;
 import geom.math.Vector;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Arrays;
 
 /**
  * El algoritmo Steady Growth genera sirve para generar polígonos simples
@@ -13,7 +15,11 @@ import java.util.Random;
  * 
  */
 public class SteadyGrowth {
+  static Random rnd;
 
+  static {
+    rnd = new Random();
+  }
 
   /**
    * Genera un polígono simple aleatorio de n vértices.
@@ -22,17 +28,13 @@ public class SteadyGrowth {
    * @return el polígono generado
    */
   public static Polygon generateRandomPolygon(int n) {
-    LinkedList<Vector> v = new LinkedList<>();
-    Random rnd = new Random();
-    int x = 1000 + rnd.nextInt(30);
-    int y = rnd.nextInt(768);
-    int radius = 50;
-    float angle = 360 / n;
-    for (float i = 0; i < 360; i += angle) {
-      double sx = x + Math.cos(i) * radius;
-      double sy = y + Math.sin(i) * radius;
-      v.addLast(new Vector(sx, sy));
+    /* Genera un conjunto s de n puntos  distribuidos uniformemente */
+    Vector [] nn = (Vector.randomPoints(n, 30 + SteadyGrowth.rnd.nextInt(150), 30 + SteadyGrowth.rnd.nextInt(150)));    
+    LinkedList<Vector> v =  new LinkedList<>();
+    for (Vector o : nn) {
+        v.add(o);
     }
-    return new Polygon(v);
+    return new Polygon(v);   
   }
+
 }

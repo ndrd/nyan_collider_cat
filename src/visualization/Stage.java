@@ -12,6 +12,11 @@ import processing.core.PShape;
 import processing.core.PApplet;
 import processing.event.Event;
 
+ 
+/**
+ * Representa el escenario del videojuego y crea el mapeo entre poligonos y
+ * objetos que se dibujan dentro del canvas.
+ */
 public class Stage {
 	static int width;
 	static int height;
@@ -39,7 +44,12 @@ public class Stage {
 		rnd =  new Random();
 		nactors = 0;
 	}
-
+	/**
+	 * Representa un agente dentro del videojuego
+	 * cada actor tiene asociada una imagen, un poligono y un tamaño
+	 * así podemos generar el mapeo entre los poligonos y sus colisiones
+	 * y lo que se muestra dentro de la pantalla
+	 */
 	static class Actor {
 		Rol rol;
 		Polygon skeleton;
@@ -68,6 +78,9 @@ public class Stage {
 			y = 300;
 		}
 
+		/**
+		* Calcula la nueva posición del objeto de acuerdo a su tipo y al frame actual 
+		*/
 		void updateAge(int frame) {
 			int speedI = (int)((rol == Rol.ICECREAM_ROCK) ? speed /4 : speed);
 			int deltaX = (rTl) ? -1 * speedI : 1 * speedI;
@@ -92,14 +105,16 @@ public class Stage {
 		bullet = 0;
 	}
 
-	public void setBackground(String path) {
-		background = path;
-	}
-
+	/**
+	* Agrega un nuevo actor al escenario 
+	*/
 	public void addActor(Actor a) {
 		actors.put(a.hashCode(), a);
 	}
 
+	/**
+	* Elimina un actor del diccionario de actores (para mantener O(n))
+	*/
 	public void removeActor(Actor a) {
 		if (a.rol == Rol.ICECREAM_ROCK)
 			rocks--;
@@ -112,6 +127,10 @@ public class Stage {
 		textures.put(r, face);
 	}
 
+	/**
+	* Genera las rocas dentro del escenario, de acuerdo a las reglas
+	* indicadas en el juegp 
+	*/
 	public void generateRocks(int age) {
 		float e = actors.values().size();
 		e = e > 0 ? e : 1;
@@ -121,6 +140,10 @@ public class Stage {
 		}
 	}
 
+	/**
+	* Crea una bala dentro del escenario, se vincula a la posición
+	* de la nave que la esta lanzando
+	*/
 	public static Actor createBullet(int birth, Actor sender) {
 		Vector x1 =  new Vector(sender.x-80, sender.y);
 		Vector x2 =  new Vector(sender.x-80, sender.y-48);
@@ -142,8 +165,13 @@ public class Stage {
 		return b;
 	}
 
+	/**
+	* Crea las rocas del juego usando un generador de rocas aleatorio basado
+	* en el algoritmo SteadyGrowth
+	*/
 	public static Actor createSpaceRock(int birth) {
-		Polygon p = SteadyGrowth.generateRandomPolygon(3 + Stage.rnd.nextInt(10));
+		Polygon p = SteadyGrowth.generateRandomPolygon(3 + Stage.rnd.nextInt(5));
+		p.traslate(width,0);
 		Actor b = new Actor(Rol.ICECREAM_ROCK, p, true, true, birth);
 		Vector centroid = p.getCentroid();
 		b.x = (int) centroid.x;
@@ -153,6 +181,9 @@ public class Stage {
 		return b;
 	}
 
+	/**
+	* Crea la nave del juego
+	*/
 	public static Actor createShip(PImage image) {
 		Vector x1 =  new Vector(0, Stage.height / 2);
 		Vector x2 =  new Vector(0, Stage.height / 2 + 100);

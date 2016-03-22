@@ -136,7 +136,21 @@ public class Vector {
    * @return double signo del determinante
    */
   public static double areaSign(Vector a, Vector b, Vector c) {
-    return 0.0;
+    // Transladamos los puntos para que d quede en el origen
+    double ax = a.x - c.x, ay = a.y - c.y;
+    double bx = b.x - c.x, by = b.y - c.y;
+
+    // Calculamos el area
+    double area = (ax * by) - (ay * bx);
+    if (area < 0.0) {
+      return -1.0;
+    }
+    else if (area > 0.0) {
+      return 1.0;
+    }
+    else {
+      return 0.0;
+    }
   }
 
   /**
@@ -166,15 +180,14 @@ public class Vector {
 
     Vector[] points = new Vector[n];
     int idx = 0;
+
     while(idx < n) {
 
       // Genera un nuevo vector
       double x = Math.round((random.nextDouble() * range) + start);
       double y = Math.round((random.nextDouble() * range) + start);
       Vector p = new Vector(x, y);
-
       if(idx < 2) {
-
         // Lo guardamos
         points[idx] = p;
         idx++;
@@ -187,7 +200,7 @@ public class Vector {
           for (int j = 0; j < idx; j++) {
             if(i != j) {
               boolean test = Vector.areCollinear(points[i], points[j], p);
-              areCollinear = areCollinear || test;
+              areCollinear |= test;
             }
           }
         }
@@ -202,7 +215,7 @@ public class Vector {
       }
     }
 
-    return points;
+     return points;
   }
 
   @Override

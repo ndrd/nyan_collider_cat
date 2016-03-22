@@ -1,6 +1,7 @@
 package geom.structures;
 
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map;
 import geom.math.Vector;
@@ -152,7 +153,7 @@ public class Polygon {
     boolean inside = true;
     for (int i = 0; i < p.size(); i += 2) {
       /* todos deben estar a la derecha */
-      inside &= Vector.areaSign(point, p.get(i), p.get(i+1%p.size())) > 0;
+      inside &= Vector.areaSign(point, p.get(i), p.get(i+1%p.size())) < 0;
     }
     return inside;
   }
@@ -170,15 +171,15 @@ public class Polygon {
     return min;
   }
 
-  private LinkedList<Vector> sortBySlope(Vector sentinel, LinkedList<Vector> points) {
+  private ArrayList<Vector> sortBySlope(Vector sentinel, LinkedList<Vector> points) {
     TreeMap<Double, Vector> slopes =  new TreeMap<>();
     for (Vector v : points) {
       double m = (v.y - sentinel.y) / (v.x - sentinel.x);
       slopes.put(m,v);
     }
-    LinkedList<Vector> vectorsBySlope =  new LinkedList<>();
+    ArrayList<Vector> vectorsBySlope =  new ArrayList<>();
     for (Map.Entry<Double, Vector> node : slopes.entrySet()) {
-      vectorsBySlope.addLast(node.getValue());
+      vectorsBySlope.add(node.getValue());
     }
     return vectorsBySlope;
   }
@@ -210,8 +211,38 @@ public class Polygon {
     return new Vector((hull.a3.x + hull.a1.x) * 0.5 ,(hull.a1.y + hull.a2.y) * 0.5);
   } 
 
+  /**
+   * Regresa el cierre convexo del polígono.
+   *
+   * @return Polygon El cierre convexo del polígono
+   */
   public Polygon getConvexHull() {
-    return null;
+    LinkedList<Vector> hullPoints = new LinkedList<>();
+    /* O(n) */
+    Vector minY =  getMinY(points);
+    /* O(nlogn) */
+    ArrayList<Vector> pts = sortBySlope(minY, points);
+    /* anclamos el primer y ultimo punto */
+    pts.add(minY);
+    pts.set(0, minY);
+    int n = points.size();
+
+    /* puntos del cierre convexo */
+    int m = 1;
+    for (int i = 2; i < n; ++i) {
+      /* encuentra el próximo punto válido dentro del cierre convexo */
+      while (Vector.areaSign(pts.get(m-1), pts.get(m), pts.get(i)) <= 0) {
+        if (m > 1)
+          m -= 1;
+        else if (i == n)
+          break;
+        else
+          i++;
+      }
+      hullPoints.add(pts.get(++m));
+    }
+
+    return new Polygon(hullPoints);
   }
 
   /**
