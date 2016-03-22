@@ -221,7 +221,7 @@ public class Polygon {
    * @return Polygon El cierre convexo del polígono
    */
   public Polygon getConvexHull() {
-    if (points < 3)
+    if (points.size() < 3)
       return new Polygon(points);
 
     /* O(n) */
@@ -229,6 +229,7 @@ public class Polygon {
     Vector min =  getMin(points);
     /* O(nlogn) */
     ArrayList<Vector> sorted = sortBySlope(min, points);
+    sorted.set(0, min);
     /* metemos los primeros dos puntos */
      Stack<Vector> stack = new Stack<Vector>();
      stack.push(sorted.get(0));
@@ -240,14 +241,14 @@ public class Polygon {
          Vector middle = stack.pop();
          Vector end = stack.peek();
 
-         int turn = Vector.areaSign(end, middle, start);
+         int turn = (int) Vector.areaSign(end, middle, start);
 
          switch(turn) {
-             case -1:
+             case 1:
                  stack.push(middle);
                  stack.push(start);
                  break;
-             case 1:
+             case -1:
                  i--;
                  break;
              case 0:
@@ -257,7 +258,7 @@ public class Polygon {
      }
 
    // close the hull
-   stack.push(sorted.get(0));
+   //stack.push(sorted.get(0));
   return new Polygon(new LinkedList<Vector>(stack));
   }
 

@@ -35,7 +35,7 @@ public class SteadyGrowth {
     for (Vector o : nn) {
         v.add(o);
     }
-    return new Polygon(v);   
+    return new Polygon(v).getConvexHull();   
   }
 
 }

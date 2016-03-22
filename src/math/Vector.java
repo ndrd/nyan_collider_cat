@@ -185,7 +185,35 @@ public class Vector {
       double x = Math.round((random.nextDouble() * range) + start);
       double y = Math.round((random.nextDouble() * range) + start);
       Vector p = new Vector(x, y);
-      points[idx++] = p;
+      System.out.println( "p: " +p);
+
+      if(idx < 2) {
+
+        // Lo guardamos
+        points[idx] = p;
+        idx++;
+      }
+      else {
+
+        // Checamos que no haya tres colineales
+        boolean areCollinear = false;
+        for (int i = 0; i < idx; i++) {
+          for (int j = 0; j < idx; j++) {
+            if(i != j) {
+              boolean test = Vector.areCollinear(points[i], points[j], p);
+              areCollinear = areCollinear || test;
+            }
+          }
+        }
+
+        // No hay colineales
+        if(!areCollinear) {
+
+          // Lo guardamos
+          points[idx] = p;
+          idx++;
+        }
+      }
     }
     return points;
   }
