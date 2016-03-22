@@ -29,7 +29,7 @@ public class SteadyGrowth {
    */
   public static Polygon generateRandomPolygon(int n) {
     /* Genera un conjunto s de n puntos  distribuidos uniformemente */
-    Vector [] nn = (Vector.randomPoints(n, 30 + SteadyGrowth.rnd.nextInt(150), 30 + SteadyGrowth.rnd.nextInt(150)));    
+    Vector [] nn = (Vector.randomPoints(n, 80+ SteadyGrowth.rnd.nextInt(150), 80+ SteadyGrowth.rnd.nextInt(150)));    
     LinkedList<Vector> v =  new LinkedList<>();
     for (Vector o : nn) {
         v.add(o);
