@@ -179,13 +179,17 @@ public class Vector {
 
     Vector[] points = new Vector[n];
     int idx = 0;
+    int maxTries = 100;
+
     while(idx < n) {
 
       // Genera un nuevo vector
       double x = Math.round((random.nextDouble() * range) + start);
       double y = Math.round((random.nextDouble() * range) + start);
       Vector p = new Vector(x, y);
-      System.out.println( "p: " +p);
+
+        if (--maxTries == 0)
+          return null;
 
       if(idx < 2) {
 

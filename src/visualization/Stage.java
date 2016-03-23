@@ -146,8 +146,8 @@ public class Stage {
 	*/
 	public static Actor createBullet(int birth, Actor sender) {
 		Vector x1 =  new Vector(sender.x-150, sender.y);
-		Vector x2 =  new Vector(sender.x-150, sender.y-100);
-		Vector x3 =  new Vector(sender.x, sender.y-100);
+		Vector x2 =  new Vector(sender.x-150, sender.y+100);
+		Vector x3 =  new Vector(sender.x, sender.y+100);
 		Vector x4 =  new Vector(sender.x, sender.y);
 		LinkedList<Vector> vectors = new LinkedList<>();
 		vectors.addLast(x1);
@@ -170,7 +170,9 @@ public class Stage {
 	* en el algoritmo SteadyGrowth
 	*/
 	public static Actor createSpaceRock(int birth) {
-		Polygon p = SteadyGrowth.generateRandomPolygon(3 + Stage.rnd.nextInt(50));
+		Polygon p = null;
+		while (p == null)
+			p = SteadyGrowth.generateRandomPolygon(5 + Stage.rnd.nextInt(50));
 		Vector xx =  p.hull.a1;
 		Vector centroid  = p.getCentroid();
 		p.traslate(width-xx.x, -Stage.rnd.nextInt(height/2));
